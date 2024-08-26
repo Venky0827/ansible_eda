@@ -1,0 +1,8 @@
+---
+- name: EDA | Display the name of the deleted pod
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Display deleted pod name
+      debug:
+        msg: "The pod '{{ pod_name }}' has been deleted from the 'health' namespace."
