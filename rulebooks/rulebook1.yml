@@ -1,0 +1,26 @@
+---
+- name: Monitor Pod Deletion in Health Namespace
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - ansible.eda
+    - kubernetes.core
+
+  sources:
+    - ansible.eda.kubernetes_event:
+        host: "https://<your-openshift-api-server>"
+        api_key: "<your-openshift-api-key>"
+        verify_ssl: false
+        namespace: "health"  # Namespace to monitor
+        kind: "Pod"          # Resource type to monitor
+        event_type: "DELETE" # Event type to monitor (DELETED pods)
+
+  rules:
+    - name: Check for pod deletion
+      condition: event.payload.involvedObject.kind == "Pod"
+      action:
+        - debug:
+            msg: "Pod-name: {{ event.payload.involvedObject.name }}"
+        - run_job_template:
+            name: "EDA"
+            organization: Default
